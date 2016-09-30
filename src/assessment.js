@@ -50,11 +50,18 @@ var foo;
   which changes the variable foo (above) to 'bar'
   And resolve the promise when setTimeout completes.
 */
-function async($q) {
-  var deferred = $q.defer();
+  function async() {
+    var $q = new Promise(function(resolve) {
+    	setTimeout(function(){
+    		$q.resolve();
+    		foo = 'bar'
+    	}, 1000)
+    }).then(function(){
+      return $q.promise;
+    });
+  }
 
-  return deferred.promise;
-}
+
 
 // #3  ###################
 // # Context 1
@@ -74,7 +81,7 @@ var context1 = function(myFn,context,param1, param2) {
 // Invoke myFn explicitly setting the context to the object called context.  Pass in params
 var context2 = function(myFn, context, params){
   this.params = params;
-  return myFn.apply(context, [params]);
+  return myFn.apply(context, params);
 }
 
 
@@ -184,7 +191,7 @@ function compareValues(param1, param2) {
   if(typeof param1 === typeof param2 && param1 === param2){
     return "Exact match";
   } else if (param1 ==  param2 && typeof param1 !== typeof param2) {
-    return "Different types"  
+    return "Different types"
   }else {
     return "Different values"
   }
