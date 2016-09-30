@@ -51,14 +51,18 @@ var foo;
   And resolve the promise when setTimeout completes.
 */
   function async() {
-    var $q = new Promise(function(resolve) {
-    	setTimeout(function(){
-    		$q.resolve();
-    		foo = 'bar'
-    	}, 1000)
-    }).then(function(){
-      return $q.promise;
-    });
+  
+    var defer = $q.defer();
+    setTimeout(newFoo(), 1000)
+
+
+    function newFoo(){
+      return function(){
+        foo = 'bar';
+        defer.resolve();
+      }
+    }
+      return defer.promise;
   }
 
 
